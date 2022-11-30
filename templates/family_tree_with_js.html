@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Family Tree Demo</title>
+    <script src='http://127.0.0.1:8080/user_tree_js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossOrigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossOrigin="anonymous">
+</head>
+
+<body>
+<nav class="navbar navbar-expand bg-light">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="#" class="navbar-brand">KanTree</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a  href="/" class="nav-link active">MyTree</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/add_new_node" class="nav-link">New node</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link">LogOut</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% if nodes|length == 0 %}
+<div class="container text-center">
+  <div class="row">
+      <div class="col-sm-6 mx-auto">
+            <p class="shadow fs-1 bg-info bg-gradient  bg-opacity-50">There are no nodes. You need to create new one.</p>
+            <a href="http://127.0.0.1:8080/add_new_node" class="btn btn-primary">New Node</a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div style="width:100%; height:700px;" id="tree"></div>
+{% endif %}
+</body>
+<script type="application/javascript">
+    FamilyTree.elements.myTextArea = function (data, editElement, minWidth, readOnly) {
+    var id = FamilyTree.elements.generateId();
+    var value = data[editElement.binding];
+    if (value == undefined) value = '';
+    if (readOnly && !value) {
+        return {
+            html: ''
+        };
+    }
+    var rOnlyAttr = readOnly ? 'readonly' : '';
+    var rDisabledAttr = readOnly ? 'disabled' : '';
+    return {
+        html: `<label for="${id}" style="font-size: 18px;">${editElement.label}</label>
+                      <textarea ${rDisabledAttr} ${rOnlyAttr} id="${id}" name="${id}" style="width: 100%;height: 300px;" data-binding="${editElement.binding}">${value}</textarea>`,
+        id: id,
+        value: value
+    };
+
+};
+   var family = new FamilyTree(document.getElementById("tree"), {
+    template: "hugo",
+    enableSearch: false,
+    editForm: {
+      generateElementsFromFields: false,
+      elements: [
+          { type: 'textbox', label: 'Full Name', binding: 'name'},
+          { type: 'date', label: 'Birth Date', binding: 'birth_date' },
+          { type: 'myTextArea', label: 'Description', binding: 'description' }
+    ],
+      buttons: {
+        share: null
+      },
+      addMore: null,
+      addMoreBtn: null,
+      addMoreFieldName: null,
+    },
+    nodeBinding: {
+      field_0: "name",
+      field_1: "birth_date",
+      field_3: "description"
+    }
+  });
+
+  family.load([
+  {% for node in nodes %}
+    {
+    {% for key, value in node.items() %}    {{ key }}:{% if not value %} null{% else %}{% if value is not string %} {{ value }}{% else %} "{{ value }}"{% endif %}{% endif %}{{ ', ' if not loop.last else '' }}
+    {% endfor %}}{{ ', ' if not loop.last else '' }}{% endfor %}
+  ]);
+</script>
+</html>

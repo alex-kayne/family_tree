@@ -127,3 +127,20 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# migrations
+/migrations/
+
+# google_secret
+client_secret.json
+
+# gen test data
+insert.py
+
+# todolist
+TODO
+
+# migration tool
+/alembic/
+
+
