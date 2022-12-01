@@ -31,17 +31,14 @@ async def user_tree(request: web.Request, tree: Tree, session: Session):
     return response
 
 
-async def tree_js():
-    return web.FileResponse(path=TREE_JS_FILE_PATH, headers={'content-type': 'text/javascript'})
-
-
 async def delete_node(request: web.Request, tree: Tree, session: Session, logger: logging.Logger):
     try:
         result = await tree.delete.where(Tree.id == int(request.query['id'])).gino.status()
         logger.info(f'User {session["profile_info"]["email"]} deleted tree id {request.query["id"]}')
         return web.Response(status=200, text=result[0])
     except ValueError as e:
-        logger.error(f'Attempting to delete node, user {session["profile_info"]["email"]}. Wrong node id {request.query["id"]}')
+        logger.error(
+            f'Attempting to delete node, user {session["profile_info"]["email"]}. Wrong node id {request.query["id"]}')
         return web.Response(status=400, text=str(e))
 
 

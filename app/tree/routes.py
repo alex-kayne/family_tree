@@ -5,8 +5,6 @@ from constant import OAUTH2CALLBACK_PATH
 
 def setup_routes(app):
     app.router.add_get('/', tree_view.user_tree)
-    app.router.add_get('/user_tree_js',
-                       tree_view.tree_js)  # retrieve js for tree. TODO replace with link on static file
     app.router.add_get('/add_new_node', tree_view.get_node)
     app.router.add_post('/add_new_node', tree_view.add_node)
     app.router.add_get('/error', tree_view.error)

@@ -1,11 +1,9 @@
 from aiohttp import web
-from app.forum.models import Message
 from app.tree.models import Tree, User
 
 
 class PostgresAccessor:
     def __init__(self) -> None:
-        self.message = Message
         self.tree = Tree
         self.user = User
         self.db = None
