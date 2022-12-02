@@ -18,7 +18,9 @@ class PostgresAccessor:
         self.config = application['config']['postgres']
         await db.set_bind(self.config['database_url'])
         self.db = db
+        application['logger'].info('PostgreSQL connected')
 
-    async def _on_disconnect(self, _) -> None:
+    async def _on_disconnect(self, application: web.Application) -> None:
         if self.db is not None:
             await self.db.pop_bind().close()
+            application['logger'].info('PostgreSQL disconnected')

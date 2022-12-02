@@ -10,6 +10,8 @@ def setup_routes(app):
     app.router.add_get('/error', tree_view.error)
     app.router.add_delete('/delete_node', tree_view.delete_node)
     app.router.add_post('/update_node', tree_view.update_node)
+    # Static file
+    app.router.add_static('/js', path='./templates')
     # Authorization
     app.router.add_get('/auth', auth_views.authorize)
     app.router.add_get(f'/{OAUTH2CALLBACK_PATH}', auth_views.oauth2callback)

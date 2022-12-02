@@ -24,7 +24,8 @@ async def user_tree(request: web.Request, tree: Tree, session: Session):
             'mid': tree_object.mid,
             'fid': tree_object.fid,
             'gender': tree_object.gender.value,
-            'birth_date': tree_object.birth_date.strftime(DATE_FORMAT)
+            'birth_date': tree_object.birth_date.strftime(DATE_FORMAT),
+            'photo_url': tree_object.photo_url
         })
     context = {'nodes': message_data}
     response = render_template('family_tree_with_js.html', request, context)
@@ -101,7 +102,8 @@ async def add_node(request: web.Request, tree: Tree, session: Session, logger: l
         gender=GenderEnum.male if body_dict['gender'] == 'male' else GenderEnum.female,
         dt_created=datetime.now(),
         dt_updated=datetime.now(),
-        user_id=session['user_id']
+        user_id=session['user_id'],
+        photo_url=body_dict['photo_url']
     )
     logger.info(f'User {session["profile_info"]["email"]} create new node with id {new_tree.id}')
     if new_tree.pids:

@@ -24,6 +24,7 @@ class Tree(db.Model):
     dt_created = db.Column(db.DateTime, default=datetime.now())
     dt_updated = db.Column(db.DateTime, default=datetime.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    photo_url = db.Column(db.Text, nullable=True)
 
     _user_id_idx = db.Index('user_id_idx', user_id)
 

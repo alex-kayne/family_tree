@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Family Tree</title>
-    <script src='./user_tree_js'></script>
+    <script src="js/familytree.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
             crossOrigin="anonymous"></script>
@@ -71,11 +71,13 @@
     template: "hugo",
     enableSearch: false,
     editForm: {
+      photoBinding: "photo_url",
       generateElementsFromFields: false,
       elements: [
-          { type: 'textbox', label: 'Full Name', binding: 'name'},
-          { type: 'date', label: 'Birth Date', binding: 'birth_date' },
-          { type: 'myTextArea', label: 'Description', binding: 'description' }
+          {type: 'textbox', label: 'Full Name', binding: 'name'},
+          {type: 'date', label: 'Birth Date', binding: 'birth_date'},
+          { type: 'textbox', label: 'Photo Url', binding: 'ImgUrl'},
+          {type: 'myTextArea', label: 'Description', binding: 'description'}
     ],
       buttons: {
         share: null
@@ -87,7 +89,8 @@
     nodeBinding: {
       field_0: "name",
       field_1: "birth_date",
-      field_3: "description"
+      field_3: "description",
+      img_0: "photo_url"
     }
   });
 

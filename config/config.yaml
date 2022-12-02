@@ -2,5 +2,5 @@ common:
   host: 127.0.0.1
   port: 8080
 postgres:
-  database_url: postgres://root:root@localhost/forum
+  database_url: postgres://root:root@localhost/family_tree
   require_ssl: false
