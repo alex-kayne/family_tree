@@ -132,6 +132,7 @@ dmypy.json
 /migrations/
 
 # google_secret
+client_secret.json
 
 # gen test data
 insert.py
