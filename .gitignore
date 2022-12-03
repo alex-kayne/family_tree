@@ -132,7 +132,6 @@ dmypy.json
 /migrations/
 
 # google_secret
-client_secret.json
 
 # gen test data
 insert.py
@@ -143,4 +142,8 @@ TODO
 # migration tool
 /alembic/
 
-
+# heroku
+/config/heroku_config.yaml
+/run.sh
+/Dockerfile
+/docker-compose.yaml
