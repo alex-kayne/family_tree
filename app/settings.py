@@ -1,5 +1,5 @@
-from constant import BASE_DIR
 import yaml
+from constant import BASE_DIR
 
 config_path = BASE_DIR / 'config' / 'config.yaml'
 

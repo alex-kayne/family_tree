@@ -1,6 +1,6 @@
 import pathlib
 
-BASE_DIR = pathlib.Path(__file__).parent.parent
+BASE_DIR = pathlib.Path(__file__).parent
 DATETIME_FORMAT = '%m.%d.%Y %H:%M:%S'
 DATE_FORMAT = '%Y-%m-%d'
 
