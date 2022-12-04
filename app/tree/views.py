@@ -111,30 +111,35 @@ async def add_node(request: web.Request, tree: Tree, session: Session, logger: l
             if partner.gender.value == body_dict['gender']:
                 session['error'] = "You can`t create relationship between same gender"
                 raise web.HTTPFound('/error')
-    if body_dict['mid'] in body_dict['cid'] or body_dict['fid'] in body_dict['cid']:
-        session['error'] = "Mother (father) id can not be equal to child id for one node"
-        raise web.HTTPFound('/error')
+    mid = body_dict['mid']
+    fid = body_dict['fid']
+    cid_list = body_dict['cid'] if isinstance(body_dict['cid'], list) else [body_dict['cid']]
+    if cid_list:
+        if (mid and mid in cid_list) or (fid and fid in cid_list):
+            session['error'] = "Mother (father) id can not be equal to child id for one node"
+            raise web.HTTPFound('/error')
     new_tree = await tree.create(
         birth_date=datetime.strptime(body_dict['birth_date'], '%d.%m.%Y').date(),
         name=body_dict['full_name'].replace('+', ' '),
         description=body_dict['description'].replace('+', ' '),
         pids=[int(body_dict['pid'])] if body_dict['pid'] != '' else None,
-        mid=int(body_dict['mid']) if body_dict['mid'] != '' else None,
-        fid=int(body_dict['fid']) if body_dict['fid'] != '' else None,
+        mid=int(mid) if mid != '' else None,
+        fid=int(fid) if fid != '' else None,
         gender=GenderEnum.male if body_dict['gender'] == 'male' else GenderEnum.female,
         dt_created=datetime.now(),
         dt_updated=datetime.now(),
         user_id=session['user_id'],
         photo_url=body_dict['photo_url']
     )
-    for cid in body_dict['cid']:
-        child = await tree.get(int(cid))
-        if new_tree.gender == GenderEnum.male:
-            if not child.fid:
-                await child.update(fid=new_tree.id).apply()
-        else:
-            if not child.mid:
-                await child.update(mid=new_tree.id).apply()
+    if cid_list:
+        for cid in cid_list:
+            child = await tree.get(int(cid))
+            if new_tree.gender == GenderEnum.male:
+                if not child.fid:
+                    await child.update(fid=new_tree.id).apply()
+            else:
+                if not child.mid:
+                    await child.update(mid=new_tree.id).apply()
     logger.info(f'User {session["profile_info"]["email"]} create new node with id {new_tree.id}')
     if new_tree.pids:
         partner_tree = await tree.get(*new_tree.pids)
