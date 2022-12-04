@@ -149,4 +149,4 @@ TODO
 /Dockerfile
 /docker-compose.yaml
 
-/.idea/
+.idea
