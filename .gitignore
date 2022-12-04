@@ -142,6 +142,7 @@ TODO
 
 # migration tool
 /alembic/
+alembic.ini
 
 # heroku
 /config/heroku_config.yaml
@@ -149,5 +150,5 @@ TODO
 /Dockerfile
 /docker-compose.yaml
 
-/.idea/
-.idea/*
+.gitignore
+.idea
