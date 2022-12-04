@@ -148,3 +148,5 @@ TODO
 /run.sh
 /Dockerfile
 /docker-compose.yaml
+
+/.idea/
