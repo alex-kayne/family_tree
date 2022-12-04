@@ -59,6 +59,7 @@ async def error(request: web.Request, session: Session):
         return response
     if error_text := session.get('error', None):
         context = {'error_text': error_text}
+        del session['error']
         response = render_template('error.html', request, context)
         return response
     else:
@@ -69,15 +70,23 @@ async def get_node(request: web.Request, tree: Tree, session: Session):
     tree_record_list = await tree.query.where(tree.user_id == session['user_id']).gino.all()
     mother_list = []
     father_list = []
+    child_list = []
     user_list_free_pid = []
     for tree_record in tree_record_list:
         if tree_record.gender == GenderEnum.male:
             father_list.append(({tree_record.id}, f'{tree_record.name} {tree_record.birth_date}'))
         else:
             mother_list.append(({tree_record.id}, f'{tree_record.name} {tree_record.birth_date}'))
+        if not tree_record.mid or not tree_record.fid:
+            child_list.append(({tree_record.id}, f'{tree_record.name} {tree_record.birth_date}'))
         if not tree_record.pids:
             user_list_free_pid.append(({tree_record.id}, f'{tree_record.name} {tree_record.birth_date}'))
-    context = {'mother_list': mother_list, 'father_list': father_list, 'user_list_free_pid': user_list_free_pid}
+    context = {
+        'mother_list': mother_list,
+        'father_list': father_list,
+        'user_list_free_pid': user_list_free_pid,
+        'child_list': child_list
+    }
     response = render_template('add_new_node.html', request, context)
     return response
 
@@ -85,13 +94,26 @@ async def get_node(request: web.Request, tree: Tree, session: Session):
 async def add_node(request: web.Request, tree: Tree, session: Session, logger: logging.Logger):
     body_list = (await request.read()).replace(b'%', b'\\x').decode('unicode_escape').encode(
         'raw_unicode_escape').decode('utf-8').split('&')
-    body_dict = {string[0:string.find('=')]: string[string.find('=') + 1:] for string in body_list}
+    body_dict = {}
+    for param in body_list:
+        key = param[0:param.find('=')]
+        value = param[param.find('=') + 1:]
+        if key in body_dict:
+            if isinstance(body_dict[key], list):
+                body_dict[key].append(value)
+            else:
+                body_dict[key] = [body_dict[key], value]
+        else:
+            body_dict[key] = value
     if body_dict['pid']:
         partner_list = await request.app['db'].tree.query.where(Tree.id == int(body_dict['pid'])).gino.all()
         for partner in partner_list:
             if partner.gender.value == body_dict['gender']:
-                (await get_session(request))['error'] = "You can`t create relationship between same gender"
+                session['error'] = "You can`t create relationship between same gender"
                 raise web.HTTPFound('/error')
+    if body_dict['mid'] in body_dict['cid'] or body_dict['fid'] in body_dict['cid']:
+        session['error'] = "Mother (father) id can not be equal to child id for one node"
+        raise web.HTTPFound('/error')
     new_tree = await tree.create(
         birth_date=datetime.strptime(body_dict['birth_date'], '%d.%m.%Y').date(),
         name=body_dict['full_name'].replace('+', ' '),
@@ -105,6 +127,14 @@ async def add_node(request: web.Request, tree: Tree, session: Session, logger: l
         user_id=session['user_id'],
         photo_url=body_dict['photo_url']
     )
+    for cid in body_dict['cid']:
+        child = await tree.get(int(cid))
+        if new_tree.gender == GenderEnum.male:
+            if not child.fid:
+                await child.update(fid=new_tree.id).apply()
+        else:
+            if not child.mid:
+                await child.update(mid=new_tree.id).apply()
     logger.info(f'User {session["profile_info"]["email"]} create new node with id {new_tree.id}')
     if new_tree.pids:
         partner_tree = await tree.get(*new_tree.pids)
