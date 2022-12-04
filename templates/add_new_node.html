@@ -87,10 +87,10 @@
                         <option value="{{ user[0]|replace('{', '')|replace('}', '') }}">{{ user[1] }}</option>
                         {% endfor %}</select>
                 </div>
-                <label>Use CTRL to select multiple items</label>
                 <div class="input-group mb-3">
                     <label class="input-group-text" for="inputGroupSelect01">Child Id</label>
-                    <select class="form-select" multiple id="cid" name="cid">
+                    <select class="form-select" id="cid" name="cid">
+                        <option value="" selected="selected">Choose...</option>
                       {% for user in child_list %}
                         <option value="{{ user[0]|replace('{', '')|replace('}', '') }}">{{ user[1] }}</option>
                       {% endfor %}</select>

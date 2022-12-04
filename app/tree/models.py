@@ -17,7 +17,7 @@ class Tree(db.Model):
     birth_date = db.Column(db.Date, nullable=False)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.Text, nullable=True)
-    pids = db.Column(JSONB, nullable=True)
+    pids = db.Column(JSONB(none_as_null=True), nullable=True)
     mid = db.Column(db.Integer, nullable=True)
     fid = db.Column(db.Integer, nullable=True)
     gender = db.Column(db.Enum(GenderEnum), nullable=False)
