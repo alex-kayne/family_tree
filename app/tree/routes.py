@@ -1,6 +1,6 @@
 from app.auth import views as auth_views
 from app.tree import views as tree_view
-from constant import OAUTH2CALLBACK_PATH
+from constant import OAUTH2CALLBACK_FUN
 
 
 def setup_routes(app):
@@ -14,7 +14,7 @@ def setup_routes(app):
     app.router.add_static('/js', path='./templates')
     # Authorization
     app.router.add_get('/auth', auth_views.authorize)
-    app.router.add_get(f'/{OAUTH2CALLBACK_PATH}', auth_views.oauth2callback)
+    app.router.add_get(f'/{OAUTH2CALLBACK_FUN}', auth_views.oauth2callback)
     app.router.add_get('/login', tree_view.login)
     app.router.add_get('/logout', auth_views.revoke)
 

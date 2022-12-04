@@ -7,7 +7,8 @@ from cryptography import fernet
 
 from app.logger import setup_loger
 from app.middleware.gen_middleware import SessionCheck
-from app.settings import config, BASE_DIR
+from app.settings import config
+from constant import TREE_JS_FILE_PATH
 from app.store.database.accessor import PostgresAccessor
 from app.tree.routes import setup_routes as setup_tree_routes, setup_auth
 
@@ -24,7 +25,7 @@ def setup_config_and_logger(application):
 def setup_external_libraries(application):
     aiohttp_jinja2.setup(
         application,
-        loader=jinja2.FileSystemLoader(f'{BASE_DIR}/templates')
+        loader=jinja2.FileSystemLoader(str(TREE_JS_FILE_PATH))
     )
 
 

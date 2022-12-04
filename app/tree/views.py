@@ -7,7 +7,7 @@ from aiohttp_jinja2 import render_template
 from aiohttp_session import get_session, Session
 
 from app.tree.models import Tree, GenderEnum
-from constant import DATETIME_FORMAT, DATE_FORMAT, TREE_JS_FILE_PATH
+from constant import DATETIME_FORMAT, DATE_FORMAT
 
 
 async def user_tree(request: web.Request, tree: Tree, session: Session):

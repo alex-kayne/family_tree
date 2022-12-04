@@ -7,13 +7,13 @@ from aiohttp import web
 from aiohttp_session import Session
 
 from app.tree.models import User
-from constant import SCOPES, CLIENT_SECRETS_FILE, OAUTH2CALLBACK_PATH, DATETIME_FORMAT
+from constant import SCOPES, CLIENT_SECRETS_FILE, DATETIME_FORMAT
 
 
 async def authorize(request: web.Request, session: Session):
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES)
-    flow.redirect_uri = f'http://{request.app["config"]["common"]["host"]}:{request.app["config"]["common"]["port"]}/{OAUTH2CALLBACK_PATH}'
+    flow.redirect_uri = request.app['config']['oauth_callback']
     authorization_url, state = flow.authorization_url(
         access_type='offline',
         include_granted_scopes='true')
@@ -25,7 +25,7 @@ async def oauth2callback(request: web.Request, session: Session, user: User):
     state = session['state']
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-    flow.redirect_uri = f'http://{request.app["config"]["common"]["host"]}:{request.app["config"]["common"]["port"]}/{OAUTH2CALLBACK_PATH}'
+    flow.redirect_uri = request.app['config']['oauth_callback']
     authorization_response = str(request.url).replace('http', 'https', 1)
     flow.fetch_token(authorization_response=authorization_response)
     credentials = flow.credentials
