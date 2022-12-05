@@ -105,14 +105,17 @@ async def add_node(request: web.Request, tree: Tree, session: Session, logger: l
     body_list = (await request.read()).replace(b'%', b'\\x').decode('unicode_escape').encode(
         'raw_unicode_escape').decode('utf-8').split('&')
     body_dict = {string[0:string.find('=')]: string[string.find('=') + 1:] for string in body_list}
+    mid = body_dict['mid']
+    fid = body_dict['fid']
     if pid := body_dict['pid']:
+        if pid == mid or pid == fid:
+            session['error'] = "You can`t choose the same partner and mother(father) in one time"
+            raise web.HTTPFound('/error')
         partner_list = await request.app['db'].tree.query.where(Tree.id == int(body_dict['pid'])).gino.all()
         for partner in partner_list:
             if partner.gender.value == body_dict['gender']:
                 session['error'] = "You can`t create relationship between same gender"
                 raise web.HTTPFound('/error')
-    mid = body_dict['mid']
-    fid = body_dict['fid']
     is_male = body_dict['gender'] == GenderEnum.male.value
     child = None
     if cid := body_dict['cid']:
